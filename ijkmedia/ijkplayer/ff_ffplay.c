@@ -59,8 +59,6 @@
 # include "libavfilter/buffersrc.h"
 #endif
 
-#include "ijksdl/ijksdl_log.h"
-#include "ijkavformat/ijkavformat.h"
 #include "ff_cmdutils.h"
 #include "ff_fferror.h"
 #include "ff_ffpipeline.h"
@@ -68,6 +66,8 @@
 #include "ff_ffplay_debug.h"
 #include "version.h"
 #include "ijkmeta.h"
+#include "ijksdl/ijksdl_log.h"
+#include "ijkavformat/ijkavformat.h"
 
 #ifndef AV_CODEC_FLAG2_FAST
 #define AV_CODEC_FLAG2_FAST CODEC_FLAG2_FAST
@@ -93,6 +93,9 @@
 #define FFP_IO_STAT_STEP (50 * 1024)
 
 #define FFP_BUF_MSG_PERIOD (3)
+
+///<Fixme(tbago)    add rtsp real time support
+#define FOR_RTSP_REAL_TIME_SUPPORT
 
 // static const AVOption ffp_context_options[] = ...
 #include "ff_ffplay_options.h"
@@ -374,8 +377,13 @@ static int decoder_decode_frame(FFPlayer *ffp, Decoder *d, AVFrame *frame, AVSub
             do {
                 if (d->queue->nb_packets == 0)
                     SDL_CondSignal(d->empty_queue_cond);
+#ifdef FOR_RTSP_REAL_TIME_SUPPORT
                 if (packet_queue_get_or_buffering(ffp, d->queue, &pkt, &d->pkt_serial, &d->finished) < 0)
                     return -1;
+#else
+                if(packet_queue_get(d->queue, &pkt,1, &d->pkt_serial) <0)
+                    return-1;
+#endif
                 if (pkt.data == flush_pkt.data) {
                     avcodec_flush_buffers(d->avctx);
                     d->finished = 0;
@@ -2905,11 +2913,13 @@ static int read_thread(void *arg)
         ffp_statistic_l(ffp);
 
         if (ffp->packet_buffering) {
+#ifdef FOR_RTSP_REAL_TIME_SUPPORT
             io_tick_counter = SDL_GetTickHR();
             if (abs((int)(io_tick_counter - prev_io_tick_counter)) > BUFFERING_CHECK_PER_MILLISECONDS) {
                 prev_io_tick_counter = io_tick_counter;
                 ffp_check_buffering_l(ffp);
             }
+#endif
         }
     }
 

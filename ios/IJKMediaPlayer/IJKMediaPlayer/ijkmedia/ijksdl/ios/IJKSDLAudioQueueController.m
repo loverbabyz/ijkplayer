@@ -187,8 +187,20 @@
     }
 
     // do not lock AudioQueueStop, or may be run into deadlock
-    AudioQueueStop(_audioQueueRef, true);
-    AudioQueueDispose(_audioQueueRef, true);
+    dispatch_queue_t concurrentQueue = dispatch_queue_create("leon.audio.queue",DISPATCH_QUEUE_CONCURRENT);
+    dispatch_async(concurrentQueue, ^{
+        while(true) {
+            UInt32 askRunning = 0;
+            UInt32 runsize = sizeof(askRunning);
+            AudioQueueGetProperty(_audioQueueRef,kAudioQueueProperty_IsRunning, &askRunning, &runsize);
+            if(askRunning) {
+                AudioQueueStop(_audioQueueRef,true);
+                AudioQueueDispose(_audioQueueRef,true);
+                _audioQueueRef=nil;
+                break;
+            }
+        }
+    });
 }
 
 - (void)close

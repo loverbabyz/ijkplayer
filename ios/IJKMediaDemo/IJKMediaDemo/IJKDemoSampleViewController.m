@@ -35,6 +35,10 @@
 
     NSMutableArray *sampleList = [[NSMutableArray alloc] init];
 
+    [sampleList addObject:@[@"fpv",
+                            @"rtsp://192.168.1.1/fpvview"]];
+    [sampleList addObject:@[@"hks",
+                            @"rtmp://live.hkstv.hk.lxdns.com/live/hks"]];
     [sampleList addObject:@[@"bipbop basic master playlist",
                             @"http://devimages.apple.com.edgekey.net/streaming/examples/bipbop_4x3/bipbop_4x3_variant.m3u8"]];
     [sampleList addObject:@[@"bipbop basic 400x300 @ 232 kbps",

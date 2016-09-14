@@ -115,6 +115,7 @@ static const AVOption ffp_context_options[] = {
 
     { "max-buffer-size",                    "max buffer size should be pre-read",
         OPTION_OFFSET(dcc.max_buffer_size), OPTION_INT(MAX_QUEUE_SIZE, 0, MAX_QUEUE_SIZE) },
+/*
     { "min-frames",                         "minimal frames to stop pre-reading",
         OPTION_OFFSET(dcc.min_frames),      OPTION_INT(DEFAULT_MIN_FRAMES, MIN_MIN_FRAMES, MAX_MIN_FRAMES) },
     { "first-high-water-mark-ms",           "first chance to wakeup read_thread",
@@ -132,7 +133,8 @@ static const AVOption ffp_context_options[] = {
         OPTION_INT(DEFAULT_LAST_HIGH_WATER_MARK_IN_MS,
                    DEFAULT_FIRST_HIGH_WATER_MARK_IN_MS,
                    DEFAULT_LAST_HIGH_WATER_MARK_IN_MS) },
-
+*/
+    
     { "packet-buffering",                   "pause output until enough packets have been read after stalling",
         OPTION_OFFSET(packet_buffering),    OPTION_INT(1, 0, 1) },
     { "sync-av-start",                      "synchronise a/v start time",

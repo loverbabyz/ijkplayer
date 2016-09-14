@@ -63,6 +63,7 @@
 #include "ff_ffpipenode.h"
 #include "ijkmeta.h"
 
+#ifdef FOR_RTSP_REAL_TIME_SUPPORT
 #define DEFAULT_HIGH_WATER_MARK_IN_BYTES        (256 * 1024)
 
 /*
@@ -85,6 +86,12 @@
 #define MIN_MIN_FRAMES      5
 #define MAX_MIN_FRAMES      50000
 #define MIN_FRAMES (ffp->dcc.min_frames)
+#else
+#define MAX_QUEUE_SIZE (0)
+#define MIN_FRAMES 5
+#define MIN_MIN_FRAMES 5
+#endif
+
 #define EXTERNAL_CLOCK_MIN_FRAMES 2
 #define EXTERNAL_CLOCK_MAX_FRAMES 10
 
@@ -492,14 +499,16 @@ typedef struct FFDemuxCacheControl
 
 inline static void ffp_reset_demux_cache_control(FFDemuxCacheControl *dcc)
 {
-    dcc->min_frames                = DEFAULT_MIN_FRAMES;
     dcc->max_buffer_size           = MAX_QUEUE_SIZE;
+#ifdef FOR_RTSP_REAL_TIME_SUPPORT
+    dcc->min_frames                = DEFAULT_MIN_FRAMES;
     dcc->high_water_mark_in_bytes  = DEFAULT_HIGH_WATER_MARK_IN_BYTES;
 
     dcc->first_high_water_mark_in_ms    = DEFAULT_FIRST_HIGH_WATER_MARK_IN_MS;
     dcc->next_high_water_mark_in_ms     = DEFAULT_NEXT_HIGH_WATER_MARK_IN_MS;
     dcc->last_high_water_mark_in_ms     = DEFAULT_LAST_HIGH_WATER_MARK_IN_MS;
     dcc->current_high_water_mark_in_ms  = DEFAULT_FIRST_HIGH_WATER_MARK_IN_MS;
+#endif
 }
 
 /* ffplayer */

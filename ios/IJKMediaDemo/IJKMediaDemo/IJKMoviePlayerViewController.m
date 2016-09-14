@@ -72,7 +72,27 @@
     [IJKFFMoviePlayerController checkIfFFmpegVersionMatch:YES];
     // [IJKFFMoviePlayerController checkIfPlayerVersionMatch:YES major:1 minor:0 micro:0];
 
-    IJKFFOptions *options = [IJKFFOptions optionsByDefault];
+    IJKFFOptions*options = [[IJKFFOptions alloc] init];
+    [options setPlayerOptionIntValue:30 forKey:@"max-fps"];
+    [options setPlayerOptionIntValue:0 forKey:@"framedrop"];
+    [options setPlayerOptionIntValue:3 forKey:@"video-pictq-size"];
+    [options setPlayerOptionIntValue:0 forKey:@"packet-buffering"];
+    
+    [options setFormatOptionIntValue:0 forKey:@"auto_convert"];
+    [options setFormatOptionIntValue:1 forKey:@"reconnect"];
+    [options setFormatOptionIntValue:10 * 1000 *1000 forKey:@"timeout"];
+    [options setFormatOptionValue:@"ijkplayer" forKey:@"user-agent"];
+    [options setFormatOptionValue:@"2000000" forKey:@"analyzeduration"];//增加的
+    [options setFormatOptionValue:@"nobuffer" forKey:@"fflags"];//增加的
+    [options setFormatOptionValue:@"1024" forKey:@"probsize"]; //增加的
+    
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >=8.0f)
+    {
+        [options setPlayerOptionIntValue:1 forKey:@"videotoolbox"];
+        [options setPlayerOptionIntValue:960 forKey:@"videotoolbox-max-frame-width"];
+    }
+    
+    options.showHudView = NO;
 
     self.player = [[IJKFFMoviePlayerController alloc] initWithContentURL:self.url withOptions:options];
     self.player.view.autoresizingMask = UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight;
